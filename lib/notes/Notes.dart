@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'NotesModel.dart' as notesModel;
 import 'NotesDBWorker.dart';
 import 'NotesModel.dart' show NotesModel, notesModel;
-//import 'NotesModel.dart';
 
 class Notes extends StatelessWidget{
 
