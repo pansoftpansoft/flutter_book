@@ -13,6 +13,7 @@ class Notes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
     return ScopedModel<NotesModel>(
         model: notesModel,
         child: ScopedModelDescendant<NotesModel>(builder:

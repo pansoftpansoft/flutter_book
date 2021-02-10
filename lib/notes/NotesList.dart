@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_book/notes/NotesModel.dart';
+
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'Note.dart';
 import 'NotesDBWorker.dart';
+
+import 'package:scoped_model/scoped_model.dart';
+
 
 class NotesList extends StatelessWidget {
   Widget build(BuildContext inContent) {
