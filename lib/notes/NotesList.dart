@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_book/notes/NotesModel.dart';
 import 'package:scoped_model/scoped_model.dart';
+
+import 'Note.dart';
 
 class NotesList extends StatelessWidget {
   Widget build(BuildContext inContent) {
@@ -11,7 +12,7 @@ class NotesList extends StatelessWidget {
             (BuildContext inContext, Widget inChild, NotesModel inModel) {
           return Scaffold(
             floatingActionButton: FloatingActionButton(
-              child: Icon(Icon.add, color: Colors.white),
+              child: Icon(Icons.add, color: Colors.white),
               onPressed: () {
                 notesModel.entityBeingEdited = Note();
                 notesModel.setColor(null);
@@ -33,9 +34,9 @@ class NotesList extends StatelessWidget {
                   }
                   return Container();
               }
-          );
+          ));
         })
 
-    ));
+    );
   }
 }
