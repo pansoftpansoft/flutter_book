@@ -71,6 +71,7 @@ class NotesDBWorker {
   }
 
   Future<List> getAll() async {
+    
     Database db = await database;
     var recs = await db.query("notes");
     var list = recs.isEmpty ? recs.map((m) => noteFromMap(m)).toList() : [];
