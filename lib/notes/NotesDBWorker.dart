@@ -22,7 +22,7 @@ class NotesDBWorker {
     String path = join(utils.docsDir.path, "notes.db");
     Database db = await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database inDB, int inVersion) async {
-      await inDB.execute("CREATE TABLE IF NOT EXIXTS notes("
+      await inDB.execute("CREATE TABLE IF NOT EXISTS notes("
           "id INTEGER PRIMARY KEY,"
           "title TEXT,"
           "content  TEXT,"
@@ -70,7 +70,8 @@ class NotesDBWorker {
     return noteFromMap(rec.first);
   }
 
-  Future<List> getAll(int inID) async {
+  Future<List> getAll() async {
+    
     Database db = await database;
     var recs = await db.query("notes");
     var list = recs.isEmpty ? recs.map((m) => noteFromMap(m)).toList() : [];
