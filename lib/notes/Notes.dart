@@ -12,8 +12,6 @@ class Notes extends StatelessWidget{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container();
-    throw UnimplementedError();
   }
-
 }
 

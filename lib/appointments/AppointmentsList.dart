@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'Appointment.dart';
+import 'AppointmentsDBWorker.dart';
 import 'AppointmentsModel.dart';
 
 class AppointmentsList extends StatelessWidget {
@@ -35,7 +35,7 @@ class AppointmentsList extends StatelessWidget {
             onPressed: () async {
               appointmentsModel.entityBeingEdited = Appointment();
               DateTime now = DateTime.now();
-              appointmentsModel.entityBeingEdited.appointment =
+              appointmentsModel.entityBeingEdited.appointmentDate=
                   "${now.year},${now.month}, ${now.day}";
               appointmentsModel.setChosenDate(
                   DateFormat.yMMMMd("en_US").format(now.toLocal()));
@@ -64,6 +64,9 @@ class AppointmentsList extends StatelessWidget {
   }
 
   void _showAppointments(DateTime inDate, BuildContext inContext) async {
+    print(
+        "## AppointmentsList._showAppointments(): inDate = $inDate (${inDate.year},${inDate.month},${inDate.day})"
+    );
     showModalBottomSheet(
         context: inContext,
         builder: (BuildContext inContext) {
@@ -147,9 +150,78 @@ class AppointmentsList extends StatelessWidget {
         });
   }
 
-  void _editAppointment(
-      BuildContext inContext, Appointment inAppointment) async {}
+  void _editAppointment(BuildContext inContext, Appointment inAppointment) async {
 
-  void _deleteAppointment(
-      BuildContext inContext, Appointment inAppointment) async {}
+    print("## AppointmentsList._editAppointment(): inAppointment = $inAppointment");
+
+    // Get the data from the database and send to the edit view.
+    appointmentsModel.entityBeingEdited = await AppointmentsDBWorker.db.get(inAppointment.id);
+    // Parse out the apptDate and apptTime, if any, and set them in the model
+    // for display.
+    if (appointmentsModel.entityBeingEdited.appointmentDate == null) {
+      appointmentsModel.setChosenDate(null);
+    } else {
+      List dateParts = appointmentsModel.entityBeingEdited.appointmentDate.split(",");
+      DateTime appointmentDate = DateTime(
+          int.parse(dateParts[0]), int.parse(dateParts[1]), int.parse(dateParts[2])
+      );
+      appointmentsModel.setChosenDate(
+          DateFormat.yMMMMd("en_US").format(appointmentDate.toLocal())
+      );
+    }
+    if (appointmentsModel.entityBeingEdited.appointmentTime == null) {
+      appointmentsModel.setAppointmentTime(null);
+    } else {
+      List timeParts = appointmentsModel.entityBeingEdited.appointmentTime.split(",");
+      TimeOfDay appointmentTime = TimeOfDay(
+          hour : int.parse(timeParts[0]), minute : int.parse(timeParts[1])
+      );
+      appointmentsModel.setAppointmentTime(appointmentTime.format(inContext));
+    }
+    appointmentsModel.setStackIndex(1);
+    Navigator.pop(inContext);
+
+  } /* End _editAppointment. */
+
+  Future _deleteAppointment(BuildContext inContext, Appointment inAppointment) async {
+
+    print("## AppointmentsList._deleteAppointment(): inAppointment = $inAppointment");
+
+    return showDialog(
+        context : inContext,
+        barrierDismissible : false,
+        builder : (BuildContext inAlertContext) {
+          return AlertDialog(
+              title : Text("Delete Appointment"),
+              content : Text("Are you sure you want to delete ${inAppointment.title}?"),
+              actions : [
+                FlatButton(child : Text("Cancel"),
+                    onPressed: () {
+                      // Just hide dialog.
+                      Navigator.of(inAlertContext).pop();
+                    }
+                ),
+                FlatButton(child : Text("Delete"),
+                    onPressed : () async {
+                      // Delete from database, then hide dialog, show SnackBar, then re-load data for the list.
+                      await AppointmentsDBWorker.db.delete(inAppointment.id);
+                      Navigator.of(inAlertContext).pop();
+                      Scaffold.of(inContext).showSnackBar(
+                          SnackBar(
+                              backgroundColor : Colors.red,
+                              duration : Duration(seconds : 2),
+                              content : Text("Appointment deleted")
+                          )
+                      );
+                      // Reload data from database to update list.
+                      appointmentsModel.loadData("appointments", AppointmentsDBWorker.db);
+                    }
+                )
+              ]
+          );
+        }
+    );
+
+  } /* End _deleteAppointment(). */
+
 }
