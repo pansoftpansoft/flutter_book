@@ -10,18 +10,26 @@ class Notes extends StatelessWidget {
     notesModel.loadData("notes", NotesDBWorker.db);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
+
+  Widget build(BuildContext inContext) {
+
+    print("## Notes.build()");
 
     return ScopedModel<NotesModel>(
-        model: notesModel,
-        child: ScopedModelDescendant<NotesModel>(builder:
-            (BuildContext inContext, Widget inChild, NotesModel inModel) {
-          return IndexedStack(
-            index: inModel.stackIndex,
-            children: [NotesList(), NotesEntry()],
-          );
-        }));
-  }
+        model : notesModel,
+        child : ScopedModelDescendant<NotesModel>(
+            builder : (BuildContext inContext, Widget inChild, NotesModel inModel) {
+              return IndexedStack(
+                  index : inModel.stackIndex,
+                  children : [
+                    NotesList(),
+                    NotesEntry()
+                  ] /* End IndexedStack children. */
+              ); /* End IndexedStack. */
+            } /* End ScopedModelDescendant builder(). */
+        ) /* End ScopedModelDescendant. */
+    ); /* End ScopedModel. */
+
+  } /* End build(). */
+
 }

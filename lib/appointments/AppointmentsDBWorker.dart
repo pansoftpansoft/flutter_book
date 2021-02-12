@@ -3,7 +3,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'Appointment.dart';
 
-
 class AppointmentsDBWorker {
   AppointmentsDBWorker._();
 
@@ -20,7 +19,6 @@ class AppointmentsDBWorker {
 
   Future<Database> init() async {
     String path = join(utils.docsDir.path, "appointments.db");
-
     Database db = await openDatabase(path, version: 2, onOpen: (db) {},
         onCreate: (Database inDB, int inVersion) async {
       await inDB.execute("CREATE TABLE IF NOT EXISTS appointments("
@@ -30,6 +28,13 @@ class AppointmentsDBWorker {
           "appointmentDate  TEXT,"
           "appointmentTime TEXT)");
     });
+    //await db.execute("DROP TABLE IF EXISTS appointments");
+    await db.execute("CREATE TABLE IF NOT EXISTS appointments("
+        "id INTEGER PRIMARY KEY,"
+        "title TEXT,"
+        "description TEXT,"
+        "appointmentDate  TEXT,"
+        "appointmentTime TEXT)");
     return db;
   }
 
