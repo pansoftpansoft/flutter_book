@@ -12,7 +12,7 @@ class BaseModel extends Model {
   }
 
   void loadData(String inEntityType, dynamic inDatabase) async {
-    print('loadData' + this.toString());
+    print('loadData  --- ' + this.toString());
     entityList = await inDatabase.getAll();
     notifyListeners();
   }

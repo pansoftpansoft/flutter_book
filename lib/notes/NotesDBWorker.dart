@@ -6,9 +6,7 @@ import 'Note.dart';
 
 class NotesDBWorker {
   NotesDBWorker._();
-
   static final NotesDBWorker db = NotesDBWorker._();
-
   Database _db;
 
   Future get database async {
@@ -18,7 +16,13 @@ class NotesDBWorker {
     return _db;
   }
 
+
+
+
   Future<Database> init() async {
+
+
+
     String path = join(utils.docsDir.path, "notes.db");
     Database db = await openDatabase(path, version: 1, onOpen: (db) {},
         onCreate: (Database inDB, int inVersion) async {
@@ -28,8 +32,17 @@ class NotesDBWorker {
           "content  TEXT,"
           "color  TEXT)");
     });
+
+    // await db.execute("DROP TABLE IF EXISTS notes");
+    // await db.execute("CREATE TABLE IF NOT EXISTS notes("
+    //     "id INTEGER PRIMARY KEY,"
+    //     "title TEXT,"
+    //     "content  TEXT,"
+    //     "color  TEXT)");
     return db;
   }
+
+
 
   Note noteFromMap(Map inMap) {
     Note note = Note();
@@ -58,6 +71,7 @@ class NotesDBWorker {
     if (id == null) {
       id = 1;
     }
+    print(id);
     return await db.rawInsert(
         "INSERT INTO notes (id, title,content, color)"
         "VALUES (?,?,?,?)",
@@ -71,10 +85,10 @@ class NotesDBWorker {
   }
 
   Future<List> getAll() async {
-    
     Database db = await database;
     var recs = await db.query("notes");
-    var list = recs.isEmpty ? recs.map((m) => noteFromMap(m)).toList() : [];
+    var list = recs.isNotEmpty ? recs.map((m) => noteFromMap(m)).toList() : [];
+    print(recs.length);
     return list;
   }
 
